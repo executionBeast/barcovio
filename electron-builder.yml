@@ -1,0 +1,19 @@
+appId: com.barcovio.app
+productName: Barcovio
+copyright: Copyright © 2025 Sujit Kumar
+directories:
+  output: release
+files:
+  - dist/**
+  - node_modules/**
+  - package.json
+  - build/**
+win:
+  target:
+    - nsis
+  icon: build/icon.ico
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: true

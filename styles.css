@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    /* outline: 1px solid red; */
+}
+
+#video-wrapper {
+    position: relative;
+}
+
+#blink-wrapper {
+    position: absolute;
+    top:30px;
+    left:20px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+#blink-red{
+    
+    height:30px;
+    width:30px;
+    border-radius: 20px;
+    background-color:rgb(221, 17, 17);
+    animation : ease-in-out blink-red 1s infinite ;
+}
+
+#timer {
+    margin-left: 5px;
+    color: rgb(221, 17, 17);
+    font-size: large;
+    font-weight: 500;
+}
+
+@keyframes blink-red {
+    from {transform: scale(70%); }
+    to {transform: scale(100%);}
+}
+
+#scan-and-record-btn {
+    background-color: #fff;
+    color:black;
+
+}
+
+#scan-and-record-btn.active {
+    background-color: #dddddd;
+    color: black;
+    font-weight: bold;
+
+}
+
+#view-all-record-panel-btn {
+    background-color: #fff;
+    color:black;
+}
+
+#view-all-record-panel-btn.active {
+    background-color: #dddddd;
+    color:black;
+    font-weight: bold;
+
+}
+
+#barcode-input {
+    /* animation: ease-in-out scanning 1s infinite; */
+    outline-color: #39FF14;
+    outline-width: 1px;
+    
+}
+
+#barcode-input.scanning {
+    animation: ease-in-out scanning 1s infinite;
+
+}
+
+@keyframes scanning {
+    0% {
+        /* border-width: 2px; */
+        /* border: 2px solid #39FF14; */
+        box-shadow: 0 0 2px #39FF14;
+    }
+    50% {
+        /* border-width: 1px; */
+        box-shadow: 0 0 5px #39FF14;
+
+    }
+    100% {
+        box-shadow: 0 0 10px #39FF14;
+
+    }
+}
+
+#recent-table {
+    overflow-y: scroll;
+    height: 350px;
+    display: block;
+    
+}
+
+
+#login-modal {
+    position:absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000000d2;
+    height: 100%;
+    width: 100%;
+    z-index: 9999;
+}
+
+#login-modal.loggedIn {
+   display: none; 
+}
+
+#login-form {
+    width: 20em;
+    height: 18em;
+    background-color: #fefefe;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+.inputs {
+    outline: none;
+}
+#password-wrap {
+    position: relative;
+    /* background-color: red; */
+}
+
+#eye {
+    position: absolute;
+    right:10px;
+    top:4px;
+    cursor: pointer;
+
+}
+.navLink {
+    cursor: pointer
+}
+
+
+#signup-form {
+    width: 20em;
+    height: 18em;
+    background-color: #fefefe;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

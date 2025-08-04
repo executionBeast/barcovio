@@ -1,0 +1,36 @@
+{
+  "name": "barcovio",
+  "productName": "Barcovio",
+
+  "version": "1.0.0",
+  "description": "a desktop app to record scan the packages using its barcode",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder",
+    "build:css": "npx tailwindcss -i ./styles.css -o ./styles/tailwind.css --watch",
+    "build": "electron-builder --win --x64"
+  },
+  "author": "sujit kumar",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "electron": "^37.2.1",
+    "electron-builder": "^24.9.1",
+    "electron-rebuild": "^3.2.9",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
+  },
+  "build": {
+    "appId": "com.barcovio.app",
+    "files": [
+      "**/*"
+    ], 
+    "directories": {
+      "output": "release"
+    }
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.2.0"
+  }
+}
