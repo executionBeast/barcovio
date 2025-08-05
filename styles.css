@@ -101,8 +101,8 @@
 
 #recent-table {
     overflow-y: scroll;
-    height: 350px;
-    display: block;
+    /* height: 350px; */
+    /* display: block; */
     
 }
 

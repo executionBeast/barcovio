@@ -17,6 +17,12 @@ let isDbInitialised = false;
 
 function INITIALIZEDBTABLES(db) {   //database record tables initialisation on every app usage opens
     return new Promise((resolve, reject)=> {
+        const userSql = `CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL UNIQUE,  
+            password TEXT NOT NULL
+        )`
+        
         const recordSql = `CREATE TABLE IF NOT EXISTS record (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             barcode TEXT NOT NULL,
@@ -25,14 +31,11 @@ function INITIALIZEDBTABLES(db) {   //database record tables initialisation on e
             recording_date TEXT NOT NULL,
             size TEXT NOT NULL,
             user_id INT,
-            FOREIGN KEY (user_id) REFERENCES user(id)
+            FOREIGN KEY (user_id) REFERENCES users(id)
             
         )`
-        const userSql = `CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL UNIQUE,  
-            password TEXT NOT NULL
-        )`
+      
+
         if(!db) {
             console.error("Cannot initialize database table - SQLite is not connected!")
             reject(new Error("Cannot initialize database table - SQLite is not connected!"))
@@ -41,10 +44,10 @@ function INITIALIZEDBTABLES(db) {   //database record tables initialisation on e
         
         try {
             // Changed: No callback, direct execution
-            db.exec(recordSql);
             db.exec(userSql)
-            console.log("Successfully Initialized Record Database Tables");
             console.log("Successfully Initialized Users Database Tables");
+            db.exec(recordSql);
+            console.log("Successfully Initialized Record Database Tables");
             
             // Changed: Direct execution for indexes
             try {
@@ -227,17 +230,22 @@ function dbRun() {
 
 const recordAPI = {
     insert: async function(recordData){
-        const { barcode, filename, path, recording_date, size } = recordData;
+        const { barcode, filename, path, recording_date, size, user_id } = recordData;
         const sql = `
-            INSERT INTO record (barcode, filename, path, recording_date, size)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO record(barcode, filename, path, recording_date, size, user_id)
+            VALUES (?, ?, ?, ?, ?, ?)
         `
-        return await INSERTDATA(sql, [barcode, filename, path, recording_date, size]);
+        return await INSERTDATA(sql, [barcode, filename, path, recording_date, size, user_id]);
     },
 
     getAll : async function() {
-        const sql = `SELECT * FROM record ORDER BY recording_date DESC`
+        const sql = `SELECT * FROM record ORDER BY recording_date DESC `
         return await GETALLDATA(sql)
+    },
+
+    getAllDataByUserID : async function(user_id){
+        const sql = `SELECT r.* , u.username FROM record r JOIN users u ON r.user_id = u.id WHERE u.id = ? ORDER BY r.recording_date DESC LIMIT 3`
+        return await GETALLDATA(sql, [user_id])
     },
 
     getByBarCode : async function(barcode) {

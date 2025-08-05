@@ -78,15 +78,16 @@ ipcMain.handle('dbRun', (event, args) => {
   return dbAPI.dbRun();
 })
 
+
 ///save video as well as store in db working
 // arrayBuffer, filename, barcode, recording_date
-ipcMain.handle('save-video-file', async (event, arrayBuffer, filename, barcode, recording_date) => {
+ipcMain.handle('save-video-file', async (event, arrayBuffer, filename, barcode, recording_date, user_id) => {
   console.log("IPC 'save-video-file' : ",{ filename: filename, size: arrayBuffer.byteLength / 1024*1024 })
   const result = await utils.saveVideoFile(arrayBuffer, filename)
   const fileSizeMB = (arrayBuffer.byteLength / (1024*1024)).toFixed(2);
   if(result.success) {
     const recordData = {
-      barcode, filename, path:result.data.path, recording_date, size: fileSizeMB
+      barcode, filename, path:result.data.path, recording_date, size: fileSizeMB, user_id
     }
     console.log("Prepared recordData to store in db :", recordData)
 
@@ -98,9 +99,9 @@ ipcMain.handle('save-video-file', async (event, arrayBuffer, filename, barcode, 
 })
 
 //get all data ipc
-ipcMain.handle('get-all-data', async function (event) {
+ipcMain.handle('get-all-data', async function (event, user_id) {
   console.log("Get All Data IPC fired...")
-  const data = await dbAPI.record.getAll();
+  const data = await dbAPI.record.getAllDataByUserID(user_id);
   if(data.status){
     return data
   }
