@@ -11,8 +11,8 @@
  <script src="./toastify.js" ></script>
 
  <!-- tabulator -->
-    <link href="./tabulator.min.css" rel="stylesheet">
-<script src="./tabulator.min.js"></script>
+    <!-- <link href="./tabulator.min.css" rel="stylesheet">
+    <script src="./tabulator.min.js"></script> -->
 
 </head>
  <body>
@@ -128,13 +128,13 @@
                     <table id="recent-table" class="min-w-full table-auto border border-gray-300">
                         <thead class="bg-gray-100">
                             <tr class="">
-                                <th class="px-2 text-left text-sm font-semibold text-gray-700 border-b">Barcode</th>
-                                <th class="px-2 text-left text-sm font-semibold text-gray-700 border-b">Filename</th>
-                                <th class="px-2 text-left text-sm font-semibold text-gray-700 border-b">File Path</th>
-                                <th class="px-2 text-left text-sm font-semibold text-gray-700 border-b">Recording Date</th>
-                                <th class="px-2 text-left text-sm font-semibold text-gray-700 border-b">File Size</th>
-                                <th class="px-2 text-left text-sm font-semibold text-gray-700 border-b">Packaged By</th>
-                                <th class="px-2 text-left text-sm font-semibold text-gray-700 border-b">Action</th>
+                                <th class="px-2 text-left text-md font-semibold text-gray-700 border-b">Barcode</th>
+                                <th class="px-2 text-left text-md font-semibold text-gray-700 border-b">Filename</th>
+                                <th class="px-2 text-left text-md font-semibold text-gray-700 border-b">File Path</th>
+                                <th class="px-2 text-left text-md font-semibold text-gray-700 border-b">Recording Date</th>
+                                <th class="px-2 text-left text-md font-semibold text-gray-700 border-b">File Size</th>
+                                <th class="px-2 text-left text-md font-semibold text-gray-700 border-b">Packaged By</th>
+                                <th class="px-2 text-left text-md font-semibold text-gray-700 border-b">Action</th>
                             </tr>
                         </thead>
                         <tbody id="record-tbody" class="bg-white divide-y divide-gray-200">
@@ -174,48 +174,63 @@
             </div>
             
             <div id="view-all-record-panel" class="view-all-record-panel w-full bg-[#dddddd] flex flex-col pl-2 ">
-                <h2 class="text-xl mt-4">All Records</h2>
-                <input type="text" id="filter-field" placeholder="Search...">
-                <div id="example-table" style="width: 100%;"></div>
-                <!-- <table id="myTable dataTable">
-                    <thead class="bg-gray-400 whitespace-nowrap">
-                            <tr>
-                                <th class="w-[50px]">SrNo</th>
-                                <th>Barcode</th>
-                                <th>Filename</th>
-                                <th>File Path</th>
-                                <th>Recording Date</th>
-                                <th>File Size</th>
-                                <th>Action</th>
+                
+                <div class="search flex items-center justify-between w-full">
+                    <h2 class="text-xl mt-4 font-semibold">All Records</h2>
+                    <div class="div flex items-center justify-center gap-2 mr-4">
+                        <input id="filter-field" class="pl-2 flex py-1" type="text"  placeholder="Search by barcode"/> 
+                        <button id="search-btn" class="border border-black rounded-md flex items-center justify-center bg-green-500 px-4 py-1 text-white gap-2 cursor-not-allowed" disabled onclick="searchRecordByBarcode()">
+                            <svg fill="#000000" height="20px" width="20px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 488.4 488.4" xml:space="preserve"><g id="SVGRepo_bgCarrier" stroke-width="1"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M0,203.25c0,112.1,91.2,203.2,203.2,203.2c51.6,0,98.8-19.4,134.7-51.2l129.5,129.5c2.4,2.4,5.5,3.6,8.7,3.6 s6.3-1.2,8.7-3.6c4.8-4.8,4.8-12.5,0-17.3l-129.6-129.5c31.8-35.9,51.2-83,51.2-134.7c0-112.1-91.2-203.2-203.2-203.2 S0,91.15,0,203.25z M381.9,203.25c0,98.5-80.2,178.7-178.7,178.7s-178.7-80.2-178.7-178.7s80.2-178.7,178.7-178.7 S381.9,104.65,381.9,203.25z"></path> </g> </g> </g></svg>
+                        Search</button>
+                    </div>
+                </div>
+                
+                <div id="table" class="overflow-y-auto h-[600px] bg-red-900">
+                    <!-- //table (id, barcode, filename, path, recording_date, size) -->
+                    <table id="view-all-data-table" class="min-w-full table-auto border border-gray-300">
+                        <thead class="bg-gray-100 text-[16px] font-semibold">
+                            <tr class="">
+                                <th class="px-4 py-1 text-xl font-semibold text-left text-sm font-semibold text-gray-700 border-b">Barcode</th>
+                                <th class="px-4 py-1 text-xl font-semibold text-left text-sm font-semibold text-gray-700 border-b">Filename</th>
+                                <th class="px-4 py-1 text-xl font-semibold text-left text-sm font-semibold text-gray-700 border-b">File Path</th>
+                                <th class="px-4 py-1 text-xl font-semibold text-left text-sm font-semibold text-gray-700 border-b">Recording Date</th>
+                                <th class="px-4 py-1 text-xl font-semibold text-left text-sm font-semibold text-gray-700 border-b">File Size</th>
+                                <th class="px-4 py-1 text-xl font-semibold text-left text-sm font-semibold text-gray-700 border-b">Packaged By</th>
+                                <th class="px-4 py-1 text-xl font-semibold text-left text-sm font-semibold text-gray-700 border-b">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="dataTableTbody">
-                            <tr class="text-[13px] whitespace-nowrap h-[30px] border-b-[1px] border-[#21212155]">
-                                <td class="w-[30px]">1</td>
-                                <td>234574823748393487</td>
-                                <td>128374823748393487_2025-07-26_00-44.webm</td>
-                                <td class="">C:\\Users\\raos9\\AppData\\Roaming\\simple-electron-app\\videos\\128374823748393487_2025-07-26_00-44.webm</td>
-                                <td>2025-07-26_00-44</td>
-                                <td>11.3MB</td>
-                                <td>
-                                    <button class="border rounded bg-gray-400 text-[#fff] px-1 border-white">Open</button>
-                                    <button class="border rounded px-1 bg-gray-200 border-black">Copy</button>
+                        <tbody id="view-all-data-table-tbody" class="bg-white divide-y divide-gray-200">
+                            <tr>
+                                <td class="px-4 py-2 text-sm text-gray-800">128374823748393487</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">128374823748393487_2025-07-26_00-44.webm</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">C:\\Users\\raos9\\AppData\\Roaming\\simple-electron-app\\videos\\128374823748393487_2025-07-26_00-44.webm</td>
+                                <td class="px-4 py-2 text-sm text-gray-800 whitespace-nowrap">2025-07-26_00-44</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">11.3MB</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">Rishabh</td>
+                                <td class="px-4 py-2 text-sm text-gray-800 flex gap-2">
+                                    <button class="border rounded bg-gray-400 text-[#fff] px-2 py-1  border-white">Open</button>
+                                    <button class="border rounded px-2  py-1 bg-gray-200 border-black">Play</button>
                                 </td>
                             </tr>
-                                <tr class="text-[13px] whitespace-nowrap h-[30px] border-b-[1px] border-[#21212155]">
-                                <td class="w-[30px]">1</td>
-                                <td>128374823748393487</td>
-                                <td>128374823748393487_2025-07-26_00-44.webm</td>
-                                <td class="">C:\\Users\\raos9\\AppData\\Roaming\\simple-electron-app\\videos\\128374823748393487_2025-07-26_00-44.webm</td>
-                                <td>2025-07-26_00-44</td>
-                                <td>11.3MB</td>
-                                <td>
-                                    <button class="border rounded bg-gray-400 text-[#fff] px-1 border-white">Open</button>
-                                    <button class="border rounded px-1 bg-gray-200 border-black">Copy</button>
+                               <tr>
+                                <td class="px-4 py-2 text-sm text-gray-800">128374823748393487</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">128374823748393487_2025-07-26_00-44.webm</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">C:\\Users\\raos9\\AppData\\Roaming\\simple-electron-app\\videos\\128374823748393487_2025-07-26_00-44.webm</td>
+                                <td class="px-4 py-2 text-sm text-gray-800 whitespace-nowrap">2025-07-26_00-44</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">11.3MB</td>
+                                <td class="px-4 py-2 text-sm text-gray-800">Rishabh</td>
+                                <td class="px-4 py-2 text-sm text-gray-800 flex gap-2">
+                                    <button class="border rounded bg-gray-400 text-[#fff] px-2 py-1  border-white">Open</button>
+                                    <button class="border rounded px-2  py-1 bg-gray-200 border-black">Play</button>
                                 </td>
                             </tr>
+                               
                         </tbody>
-                </table> -->
+
+                    </table>
+
+                
+                </div>
 
             </div>
             
@@ -224,57 +239,7 @@
     </div>
     <script defer crossorigin src="auth.js"></script>
     <script defer crossorigin src="renderer.js"></script>
-    <!-- <script>
-var table = new Tabulator("#example-table", {
-    height: 400,
-    width:1280,
-    data: [], // Start with empty data
-    columns: [
-        {title: "ID", field: "id", width: 50},
-        {title: "Barcode", field: "barcode"},
-        {title: "Filename", field: "filename"},
-        {title: "Path", field: "path"},
-        {title: "Date", field: "recording_date"},
-        {title: "Size", field: "size"}
-    ],
-    pagination: true,
-    paginationSize: 10,
-    paginationCounter: "rows",
-    headerFilter: true, // Enable column filtering
-});
-document.getElementById("filter-field").addEventListener("keyup", function(e){
-    table.setFilter("barcode", "like", e.target.value);
-});
-
-// Add data function
-async function loadDataInTable() {
-    try {
-        const record = await electronAPI.getAllRecordData();
-        
-        if (record.status && record.data.length > 0) {
-            // Transform data
-            const transformedData = record.data.map((item, index) => ({
-                id: index + 1,
-                barcode: item.barcode,
-                filename: item.filename + '.webm',
-                path: item.path,
-                recording_date: item.recording_date,
-                size: item.size + 'MB'
-            }));
-            
-            // Set data to table
-            table.setData(transformedData);
-        } else {
-            table.setData([]);
-        }
-    } catch (err) {
-        console.log("Error loading data:", err);
-    }
-}
-(async () => {
-    await loadDataInTable()
-})();
-</script> -->
+    
   
 </body>
 </html>

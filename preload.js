@@ -5,10 +5,11 @@ const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("electronAPI", {
     saveVideoFile : (arrayBuffer, filename, barcode, recording_date, user_id) => ipcRenderer.invoke('save-video-file', arrayBuffer, filename, barcode, recording_date, user_id),
-    getAllDataByUserID: (user_id) => ipcRenderer.invoke('get-all-data', user_id),
+    getAllDataByUserID: (user_id, limit) => ipcRenderer.invoke('get-all-data', user_id, limit),
+    getDataByBarcode: (barcode) => ipcRenderer.invoke('get-data-by-barcode', barcode),
     dbRun : () => ipcRenderer.invoke('dbRun', 1234), 
     checkIPC: (args) =>  ipcRenderer.invoke('check', args),
-    openFileInExplorer: (filePath) => ipcRenderer.invoke('open-file-in-explorer', filePath),
+    openFileInExplorer: (filePath, action) => ipcRenderer.invoke('open-file-in-explorer', filePath, action),
     signup : (username, password, secret) => ipcRenderer.invoke('signup', username, password, secret),
     login : (username, password) => ipcRenderer.invoke('login', username, password)
 });

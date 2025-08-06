@@ -243,14 +243,17 @@ const recordAPI = {
         return await GETALLDATA(sql)
     },
 
-    getAllDataByUserID : async function(user_id){
-        const sql = `SELECT r.* , u.username FROM record r JOIN users u ON r.user_id = u.id WHERE u.id = ? ORDER BY r.recording_date DESC LIMIT 3`
-        return await GETALLDATA(sql, [user_id])
+    getAllDataByUserID : async function(user_id, limit){
+        const sql = `SELECT r.* , u.username FROM record r JOIN users u ON r.user_id = u.id WHERE u.id = ? ORDER BY r.recording_date DESC LIMIT ?`
+        return await GETALLDATA(sql, [user_id, limit])
     },
 
     getByBarCode : async function(barcode) {
         const sql = `SELECT * FROM record WHERE barcode = ? ORDER BY recording_date DESC`
-        return await GETDATA(sql, [barcode])
+        let record = await GETDATA(sql, [barcode])
+
+        const combinedSql = `SELECT r.*, u.username FROM record r JOIN users u ON r.user_id = u.id WHERE u.id = ?`
+        return await GETDATA(combinedSql, [record.user_id])  
     },
 
     getById : async function(id) {

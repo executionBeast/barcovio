@@ -10,7 +10,7 @@ const videoDir = path.join(baseDir, "videos");
 const dbDir = path.join(baseDir, "database");
 const configDir = path.join(baseDir, "config");
 const dbFile = path.join(dbDir, "database.db")  //direct access to db.js
-const adminSecret = 'admin-secret'
+const adminSecret = 'dc-ventures@6988'
 exports.CONSTANTS = {
     baseDir,
     videoDir,

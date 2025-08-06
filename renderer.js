@@ -147,20 +147,251 @@ async function handleSignup() {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 // -------------------------------------------------/Authentication--------------------------------------------------------------------------------------------
+
+
+
+
+// ------------------------------------------------View All Record Panel---------------------------------------------
+
+
+
+const viewAllDataTable = document.getElementById('view-all-data-table')
+const viewAllDataTableTbody = document.getElementById('view-all-data-table-tbody')
+const searchBtn = document.getElementById('search-btn')
+const filterField = document.getElementById('filter-field')
+
+filterField.addEventListener('focusin', function(e){
+  searchBtn.disabled = false;
+  searchBtn.classList.remove('cursor-not-allowed')
+})
+
+function searchRecordByBarcode(){
+  let search = filterField.value
+  if(search){
+    ;(async function(){
+      await loadDataInViewAllTable(search)
+
+    })();
+    console.log("Search is : ", search)
+  }else { 
+    alert(`Search field is empty : ${filterField.value}`)
+
+  }
+
+}
+
+
+async function loadDataInViewAllTable(search=null) {
+  
+  try {
+    if(search){
+      console.log("Load Data for Single product : ", search)
+      viewAllDataTableTbody.replaceChildren('')
+      let user_id = getUserInfo().id;
+      const record = await electronAPI.getDataByBarcode(search);
+      console.log("Record of searched item : ", record)
+      if(record){
+        // console.log(record)
+        let row = document.createElement('tr')
+        // row.className = 'text-[10px]'
+        row.className =  'whitespace-nowrap h-[30px] border-b-[1px] border-[#21212155]'
+        // row.classList.add('text-[10px whitespace-nowrap border-b-[1px] border-[#21212155] w-full flex justify-between text-left')
+        // let idTd = document.createElement('td')
+        // idTd.className= "w-[30px]"
+        let barcodeTd = document.createElement('td')
+        barcodeTd.className = 'px-4 text-sm text-gray-800'
+        // barcodeTd.className='text-[10px]'
+        let filenameTd = document.createElement('td')
+        filenameTd.className = 'px-4 text-sm text-gray-800'
+        let filePathTd = document.createElement('td')
+        filePathTd.className = 'px-4 text-sm text-gray-800'
+        let recordDateTd = document.createElement('td')
+        recordDateTd.className = 'px-4 text-sm text-gray-800 whitespace-nowrap'
+        let sizeTd = document.createElement('td')
+        sizeTd.className = 'px-4 text-sm text-gray-800'
+        let packaged_by = document.createElement('td')
+        packaged_by.className = 'px-4 text-sm text-gray-800'
+
+
+        let actionTd = document.createElement('td')
+        actionTd.className = 'px-4  text-sm text-gray-800 flex gap-2'
+        let openBtn  = document.createElement('button')
+        openBtn.className = 'border rounded bg-gray-400 text-[#fff] px-1 border-white'
+        let copyBtn = document.createElement('button')
+        copyBtn.className = 'border rounded px-1 bg-gray-200 border-black'
+        openBtn.textContent = 'Open'
+        openBtn.onclick = () => {
+          console.log("Openingn file "+ record.filename)
+          electronAPI.openFileInExplorer(record.path)
+        }
+        copyBtn.textContent = 'Play'
+        copyBtn.onclick = () => {
+          console.log("Playing video file "+ record.filename)
+          electronAPI.openFileInExplorer(record.path, 'play-video')
+
+        }
+        // openBtn.className = "border rounded bg-gray-400 text-[#fff] px-1 border-white"
+        // openBtn.style.marginRight = '4px'
+        // copyBtn.className = "border rounded px-1 bg-gray-200 border-black"
+        actionTd.appendChild(openBtn);
+        actionTd.appendChild(copyBtn);
+
+
+        // idTd.textContent = record.id;
+        // idTd.textContent = countId;
+
+        barcodeTd.textContent = record.barcode;
+        filenameTd.textContent = record.filename + '.webm';
+        filePathTd.textContent = record.path;
+        recordDateTd.textContent = record.recording_date;
+        sizeTd.textContent = record.size + 'MB'
+        packaged_by.textContent = record.username
+
+        //append to tbody
+        // row.appendChild(idTd)
+        row.appendChild(barcodeTd)
+        row.appendChild(filenameTd)
+        row.appendChild(filePathTd)
+        row.appendChild(recordDateTd)
+        row.appendChild(sizeTd)
+        row.appendChild(packaged_by)
+        row.appendChild(actionTd)
+        viewAllDataTableTbody.appendChild(row)
+        return;
+      }
+
+
+    }
+    else{
+
+      console.log('No search provided loading bulk data....')
+
+   
+
+
+
+    viewAllDataTableTbody.replaceChildren('')
+    let user_id = getUserInfo().id;
+    const record = await electronAPI.getAllDataByUserID(user_id, limit=30);
+    console.log("Record Data : ",record)
+    // const record = {status: true, data: []}
+    if(record.status) {
+
+      if(record.data.length < 1){
+        let emptyRow = document.createElement('div')
+        let emptyTd = document.createElement('span')
+        emptyTd.textContent = 'There is no record to show! (Record Database is empty).'
+        emptyRow.style.textAlign = 'center'
+        emptyRow.style.display = 'flex'
+        // emptyRow.style.position = 'absolute'
+        emptyRow.style.marginTop = '10px'
+        // emptyRow.style.backgroundColor = 'green'
+        emptyRow.style.alignItems = 'center'
+        emptyRow.style.justifyContent = 'center'
+        emptyRow.appendChild(emptyTd)
+        viewAllDataTable.innerHTML = ''
+        // recentTable.style.backgroundColor = 'pink'
+        viewAllDataTable.appendChild(emptyRow)
+      }
+
+      let countId= 1
+      record.data.forEach(record => {
+        // console.log(record)
+        let row = document.createElement('tr')
+        // row.className = 'text-[10px]'
+        row.className =  'whitespace-nowrap h-[30px] border-b-[1px] border-[#21212155]'
+        // row.classList.add('text-[10px whitespace-nowrap border-b-[1px] border-[#21212155] w-full flex justify-between text-left')
+        // let idTd = document.createElement('td')
+        // idTd.className= "w-[30px]"
+        let barcodeTd = document.createElement('td')
+        barcodeTd.className = 'px-4 text-sm text-gray-800'
+        // barcodeTd.className='text-[10px]'
+        let filenameTd = document.createElement('td')
+        filenameTd.className = 'px-4 text-sm text-gray-800'
+        let filePathTd = document.createElement('td')
+        filePathTd.className = 'px-4 text-sm text-gray-800'
+        let recordDateTd = document.createElement('td')
+        recordDateTd.className = 'px-4 text-sm text-gray-800 whitespace-nowrap'
+        let sizeTd = document.createElement('td')
+        sizeTd.className = 'px-4 text-sm text-gray-800'
+        let packaged_by = document.createElement('td')
+        packaged_by.className = 'px-4 text-sm text-gray-800'
+
+
+        let actionTd = document.createElement('td')
+        actionTd.className = 'px-4  text-sm text-gray-800 flex gap-2'
+        let openBtn  = document.createElement('button')
+        openBtn.className = 'border rounded bg-gray-400 text-[#fff] px-1 border-white'
+        let copyBtn = document.createElement('button')
+        copyBtn.className = 'border rounded px-1 bg-gray-200 border-black'
+        openBtn.textContent = 'Open'
+        openBtn.onclick = () => {
+          console.log("Openingn file "+ record.filename)
+          electronAPI.openFileInExplorer(record.path)
+        }
+        // copyBtn.textContent = 'Play'
+        copyBtn.textContent = 'Play'
+        copyBtn.onclick = () => {
+          console.log("Playing video file "+ record.filename)
+          electronAPI.openFileInExplorer(record.path, 'play-video')
+
+        }
+        // openBtn.className = "border rounded bg-gray-400 text-[#fff] px-1 border-white"
+        // openBtn.style.marginRight = '4px'
+        // copyBtn.className = "border rounded px-1 bg-gray-200 border-black"
+        actionTd.appendChild(openBtn);
+        actionTd.appendChild(copyBtn);
+
+
+        // idTd.textContent = record.id;
+        // idTd.textContent = countId;
+
+        barcodeTd.textContent = record.barcode;
+        filenameTd.textContent = record.filename + '.webm';
+        filePathTd.textContent = record.path;
+        recordDateTd.textContent = record.recording_date;
+        sizeTd.textContent = record.size + 'MB'
+        packaged_by.textContent = record.username
+
+        //append to tbody
+        // row.appendChild(idTd)
+        row.appendChild(barcodeTd)
+        row.appendChild(filenameTd)
+        row.appendChild(filePathTd)
+        row.appendChild(recordDateTd)
+        row.appendChild(sizeTd)
+        row.appendChild(packaged_by)
+        row.appendChild(actionTd)
+        viewAllDataTableTbody.appendChild(row)
+        // countId++;
+          
+      })
+    }
+
+  }
+
+
+  }
+  catch(err){
+    alert("Error: Unable to fetch record from database "+err)
+    console.log("Error : ",err)
+  }
+}
+
+
+
+
+
+
+
+//------------------------------------------------/View All Record Panel---------------------------------------------
+
+
+
+
+
+
 
 
 //--------------------------------------------------Recorder Scanner-----------------------------------------------------------------------------------------------
@@ -182,7 +413,6 @@ const scanRecordTabBtn = document.getElementById('scan-and-record-btn')
 const viewRecordTabBtn = document.getElementById('view-all-record-panel-btn')
 const viewAllRecordPanel = document.getElementById('view-all-record-panel')
 const recordScanPanel = document.getElementById('record-scan-panel')
-
 // let isLoggedIn = null
 
 
@@ -301,16 +531,10 @@ function switchToRecordScanPanel(){
   viewRecordTabBtn.classList.remove('active')
   recordScanPanel.style.display = 'flex'
   viewAllRecordPanel.style.display = 'none'
-  // alert("hello"+recordScanPanel.style.display)
 
- 
-  // alert('control')
- }
- //by default Record and Scan Panle is Shown
- switchToRecordScanPanel()
-
+}
 function switchToViewAllRecordPanel(){
-
+  
   viewAllRecordPanel.classList.add('active')
   recordScanPanel.classList.remove('active')
 
@@ -319,10 +543,19 @@ function switchToViewAllRecordPanel(){
   recordScanPanel.style.display = 'none'
   viewAllRecordPanel.style.display = 'flex'
   // alert('switch')
+  ;(async function(){
+    loadDataInViewAllTable()
+  })();
 }
 
+
+ //by default Record and Scan Panle is Shown
+ switchToRecordScanPanel()
 //development
 // switchToViewAllRecordPanel()
+
+
+
 
 /* 
 <tr class="text-[13px] whitespace-nowrap h-[30px] border-b-[1px] border-[#21212155]">
@@ -337,12 +570,15 @@ function switchToViewAllRecordPanel(){
                             </td>
                         </tr>
 */
+
+
+
 async function loadDataInTable() {
   
   try {
     recordTbody.replaceChildren('')
     let user_id = getUserInfo().id;
-    const record = await electronAPI.getAllDataByUserID(user_id);
+    const record = await electronAPI.getAllDataByUserID(user_id, limit=3);
     console.log("Record Data : ",record)
     // const record = {status: true, data: []}
     if(record.status) {
@@ -374,22 +610,22 @@ async function loadDataInTable() {
         // let idTd = document.createElement('td')
         // idTd.className= "w-[30px]"
         let barcodeTd = document.createElement('td')
-        barcodeTd.className = 'px-2 text-sm text-gray-800'
+        barcodeTd.className = 'px-2  py-1 text-sm text-gray-800'
         // barcodeTd.className='text-[10px]'
         let filenameTd = document.createElement('td')
-        filenameTd.className = 'px-2 text-sm text-gray-800'
+        filenameTd.className = 'px-2  py-1 text-sm text-gray-800'
         let filePathTd = document.createElement('td')
-        filePathTd.className = 'px-2 text-sm text-gray-800'
+        filePathTd.className = 'px-2  py-1 text-sm text-gray-800'
         let recordDateTd = document.createElement('td')
-        recordDateTd.className = 'px-2 text-sm text-gray-800 whitespace-nowrap'
+        recordDateTd.className = 'px-2  py-1 text-sm text-gray-800 whitespace-nowrap'
         let sizeTd = document.createElement('td')
-        sizeTd.className = 'px-2 text-sm text-gray-800'
+        sizeTd.className = 'px-2  py-1 text-sm text-gray-800'
         let packaged_by = document.createElement('td')
-        packaged_by.className = 'px-2 text-sm text-gray-800'
+        packaged_by.className = 'px-2  py-1 text-sm text-gray-800'
 
 
         let actionTd = document.createElement('td')
-        actionTd.className = 'px-2 text-sm text-gray-800 flex gap-2'
+        actionTd.className = 'px-2 py-1  text-sm text-gray-800 flex gap-2'
         let openBtn  = document.createElement('button')
         openBtn.className = 'border rounded bg-gray-400 text-[#fff] px-1 border-white'
         let copyBtn = document.createElement('button')
@@ -399,7 +635,13 @@ async function loadDataInTable() {
           console.log("Openingn file "+ record.filename)
           electronAPI.openFileInExplorer(record.path)
         }
-        copyBtn.textContent = 'Copy'
+        // copyBtn.textContent = 'Copy'
+        copyBtn.textContent = 'Play'
+        copyBtn.onclick = () => {
+          console.log("Playing video file "+ record.filename)
+          electronAPI.openFileInExplorer(record.path, 'play-video')
+
+        }
         // openBtn.className = "border rounded bg-gray-400 text-[#fff] px-1 border-white"
         // openBtn.style.marginRight = '4px'
         // copyBtn.className = "border rounded px-1 bg-gray-200 border-black"
@@ -637,7 +879,7 @@ function finalizeScan(scan) {
 function keyHandler(e) {
   if (e.key === "Enter") {
     console.log("Scanned Buffer : ", scanBuffer)
-    if(scanBuffer.trim() === 'END') {
+    if(scanBuffer.trim() === 'END' || 'LAST') {
       stopRecording();
       // setTimeout(()=> console.log("Timeout for the scanner part to stop recording"), 3000)
       // alert('Last product scan completed.')
@@ -719,3 +961,68 @@ window.addEventListener("keydown", handleKeyDownWhenScanRecordPanelActive);
 
 
 
+
+
+//----------------------------------------------------View All Record---------------------------------------------
+
+
+
+// var table = new Tabulator("#example-table", {
+//     height: 400,
+//     width:1280,
+//     data: [], // Start with empty data
+//     columns: [
+//         {title: "ID", field: "id", width: 50},
+//         {title: "Barcode", field: "barcode"},
+//         {title: "Filename", field: "filename"},
+//         {title: "Path", field: "path"},
+//         {title: "Date", field: "recording_date"},
+//         {title: "Size", field: "size"}
+//     ],
+//     pagination: true,
+//     paginationSize: 10,
+//     paginationCounter: "rows",
+//     headerFilter: true, // Enable column filtering
+// });
+// document.getElementById("filter-field").addEventListener("keyup", function(e){
+//     table.setFilter("barcode", "like", e.target.value);
+// });
+
+// // Add data function
+// async function loadDataInTable() {
+//     try {
+//         const record = await electronAPI.getAllRecordData();
+        
+//         if (record.status && record.data.length > 0) {
+//             // Transform data
+//             const transformedData = record.data.map((item, index) => ({
+//                 id: index + 1,
+//                 barcode: item.barcode,
+//                 filename: item.filename + '.webm',
+//                 path: item.path,
+//                 recording_date: item.recording_date,
+//                 size: item.size + 'MB'
+//             }));
+            
+//             // Set data to table
+//             table.setData(transformedData);
+//         } else {
+//             table.setData([]);
+//         }
+//     } catch (err) {
+//         console.log("Error loading data:", err);
+//     }
+// }
+// (async () => {
+//     await loadDataInTable()
+// })();
+
+// table.data =[{name: 'fwef', pass: 'wdwdwf'}]
+
+
+
+
+
+
+
+//----------------------------------------------------/View All Record---------------------------------------------

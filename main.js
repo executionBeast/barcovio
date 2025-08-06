@@ -99,9 +99,9 @@ ipcMain.handle('save-video-file', async (event, arrayBuffer, filename, barcode, 
 })
 
 //get all data ipc
-ipcMain.handle('get-all-data', async function (event, user_id) {
-  console.log("Get All Data IPC fired...")
-  const data = await dbAPI.record.getAllDataByUserID(user_id);
+ipcMain.handle('get-all-data', async function (event, user_id, limit) {
+  console.log("Get All Data IPC fired...: ", user_id, limit)
+  const data = await dbAPI.record.getAllDataByUserID(user_id, limit);
   if(data.status){
     return data
   }
@@ -109,15 +109,32 @@ ipcMain.handle('get-all-data', async function (event, user_id) {
   
 })
 
-ipcMain.handle('open-file-in-explorer', async (event, filePath) => {
+
+ipcMain.handle('get-data-by-barcode', async function (event, barcode){
+  console.log("Get Data By Barcode IPC : ", barcode)
+  const data = await dbAPI.record.getByBarCode(barcode)
+  if(data){
+    return data
+  }
+  return null;
+})
+
+ipcMain.handle('open-file-in-explorer', async (event, filePath, action='open-in-folder') => {
   try {
       // Check if file exists
       if (!fs.existsSync(filePath)) {
           return { success: false, error: 'File does not exist' };
       }
+      if(action === 'open-in-folder'){
+        await shell.showItemInFolder(filePath);
 
+      }
+      if(action === 'play-video'){
+        await shell.openPath(filePath);
+
+      }
       // Open file with default application
-      await shell.openPath(filePath);
+      // await shell.openPath(filePath);
       return { success: true };
   } catch (error) {
       return { success: false, error: error.message };
